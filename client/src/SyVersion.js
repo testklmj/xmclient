@@ -2,7 +2,7 @@
  * Created by zhoufan on 2016/8/4.
  */
 var SyVersion = {
-    v:"v2.3.228",
+    v:"v2.3.229",
 
     parseVersion:function(v){
         v = v.substr(1, v.length);
