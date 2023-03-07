@@ -399,7 +399,7 @@ var CreateClubPop = BasePopup.extend({
 
     selfRender:function(){
         var btnCreate = this.getWidget("btnCreate");
-//        btnCreate.visible = false;
+        btnCreate.visible = false;
         var btnJoin = this.getWidget("btnJoin");
         var btnInviteMessage = this.getWidget("btnInvite");
         if(btnCreate && btnJoin && btnInviteMessage){

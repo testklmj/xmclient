@@ -135,7 +135,7 @@ var LoginLayer = BaseLayer.extend({
 
     setSelectServer:function(){
         var configArr = [
-            {name:"现网环境",url:"http://120.79.32.125/pdklogin/",host:"120.79.32.125",port:"9001"},
+            {name:"现网环境",url:"http://47.106.145.177/pdklogin/",host:"47.106.145.177",port:"9001"},
             {name:"test环境",url:"http://121.40.94.173:9050/pdklogin/",host:"121.40.94.173",port:"9001"},
             {name:"本地服",url:"http://192.168.2.4:8080/guajilogin/",host:"192.168.2.4",port:"8109"},
         ]

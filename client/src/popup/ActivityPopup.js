@@ -626,7 +626,7 @@ var ActivityListPopup = BasePopup.extend({
 		ListView_content.pushBackCustomItem(new declareCell(" "));
 		ListView_content.pushBackCustomItem(new declareCell("请大家文明游戏，远离赌博。祝您在《熊猫麻将》玩的开心！"));
 		ListView_content.pushBackCustomItem(new declareCell(" "));
-		ListView_content.pushBackCustomItem(new declareCell("                                                                                  熊猫麻将官方运营"));
+		ListView_content.pushBackCustomItem(new declareCell("                                                                      熊猫麻将官方运营"));
 	},
 
 	representSelfRender: function () {

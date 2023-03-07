@@ -35,11 +35,11 @@ var DailiPop = BasePopup.extend({
 		UITools.addClickEvent(Button_copyQQ, this, this.onCopyQQ);
 
 		var Label_45 = this.getWidget("Label_45");
-		Label_45.setString("客服微信：cc12658099");
+		Label_45.setString("客服微信：xmmj6998");
     },
 
 	onCopyQQ:function(){
-		var str = "cc12658099";
+		var str = "xmmj6998";
 		SdkUtil.sdkPaste(str);
 		cc.log("当前复制的字符串为:",str);
 		FloatLabelUtil.comText("复制成功");

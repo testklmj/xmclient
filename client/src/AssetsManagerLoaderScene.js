@@ -1,5 +1,7 @@
 var failCount = 0;
 var maxFailCount = 5;   //最大错误重试次数
+var failCount = 0;   //重试次数
+var maxFailConfig = 2;   //最大错误重试次数
 
 var startEnterGame = function() {
 	sy.assetsScene.logo.visible = true;
@@ -10,9 +12,12 @@ var InitConfigList = {
 	_httpUrlList:null,
 	_loginUrlList:null,
 
-	initConfig:function(manifestPath,onSuc){
+	initConfig:function(manifestPath,onSuc,url_){
+	    if (failCount > maxFailConfig) {
+	       onSuc();
+	    }
 		var self = this;
-		var url = "https://xmqp02.oss-cn-shenzhen.aliyuncs.com/configList.json"
+		var url = url_ || "https://xmqp02.oss-cn-shenzhen.aliyuncs.com/configList.json"
 		var xhr = cc.loader.getXMLHttpRequest();
 		xhr.open("GET", url);
 		xhr.timeout = 12000;
@@ -30,7 +35,7 @@ var InitConfigList = {
 					var _data = self.decryptHttp(configData);
 					var data = JSON.parse(_data);
 					// var data = JSON.parse(xhr.responseText);
-					cc.log("initConfig======",JSON.stringify(data))
+//					cc.log("initConfig======",url,JSON.stringify(data))
 					var hotUrl = (data && data.hotList && data.hotList.ips) ? data.hotList.ips : null;
 					if (hotUrl){
 					    var _hotUrl =  hotUrl + "/v02_new/"
@@ -45,10 +50,12 @@ var InitConfigList = {
 						self._loginUrlList = loginUrl;
 					}
 				}else{
-					onerror.call(self);
+				    var url1_ = "https://xmqp01.oss-cn-shenzhen.aliyuncs.com/configList.json";
+					self.initConfig(manifestPath,onSuc,url1_);
 				}
 			}else {
-				onerror.call(self);
+			    var url1_ = "https://xmqp01.oss-cn-shenzhen.aliyuncs.com/configList.json";
+				self.initConfig(manifestPath,onSuc,url1_);
 			}
 		}
 		xhr.send();
