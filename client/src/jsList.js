@@ -156,6 +156,7 @@ var jsList = [
     "src/popup/AgreementPop.js",
     "src/popup/NetErrorPop.js",
     "src/popup/AlertPop.js",
+    "src/popup/XiuFuPop.js",
     "src/popup/SetUpPop.js",
     "src/popup/CreateRoomPop.js",
     "src/popup/JoinRoomPop.js",

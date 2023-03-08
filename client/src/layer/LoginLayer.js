@@ -100,6 +100,9 @@ var LoginLayer = BaseLayer.extend({
         }
         this.selected = true;
 
+        var Button_xiufu = this.getWidget("Button_xiufu");
+         UITools.addClickEvent(Button_xiufu,this,this.onXiuFu);
+
 
         // if (!SyConfig.TJD && !SyConfig.DEBUG && !SyConfig.isSelf() && SyConfig.isSdk()){
         //    AlertNewPop.showOnlyOk("当前版本过低，请重新下载游戏", function(){
@@ -432,4 +435,10 @@ var LoginLayer = BaseLayer.extend({
         var _type  = 2;
         PopupManager.addPopup(new PhoneManagePop(_type));
     },
+
+    onXiuFu:function() {
+        PopupManager.addPopup(new XiuFuPop());
+    },
+
+
 })

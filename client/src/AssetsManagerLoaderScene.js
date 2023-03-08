@@ -1,6 +1,6 @@
 var failCount = 0;
 var maxFailCount = 5;   //最大错误重试次数
-var failCount = 0;   //重试次数
+var failConfig = 0;   //重试次数
 var maxFailConfig = 2;   //最大错误重试次数
 
 var startEnterGame = function() {
@@ -12,10 +12,10 @@ var InitConfigList = {
 	_httpUrlList:null,
 	_loginUrlList:null,
 
+
 	initConfig:function(manifestPath,onSuc,url_){
-	    if (failCount > maxFailConfig) {
-	       onSuc();
-	    }
+	    failConfig = failConfig + 1;
+//	    cc.log("initConfig======",url_,failConfig,maxFailConfig)
 		var self = this;
 		var url = url_ || "https://xmqp02.oss-cn-shenzhen.aliyuncs.com/configList.json"
 		var xhr = cc.loader.getXMLHttpRequest();
@@ -24,7 +24,6 @@ var InitConfigList = {
 		xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=utf-8");
 		var self = this;
 		var onerror = function(){
-		    onSuc();
 			xhr.abort();
 		};
 		xhr.onerror = onerror;
@@ -34,31 +33,64 @@ var InitConfigList = {
 					var configData = decodeURIComponent(xhr.responseText);
 					var _data = self.decryptHttp(configData);
 					var data = JSON.parse(_data);
-					// var data = JSON.parse(xhr.responseText);
-//					cc.log("initConfig======",url,JSON.stringify(data))
-					var hotUrl = (data && data.hotList && data.hotList.ips) ? data.hotList.ips : null;
-					if (hotUrl){
-					    var _hotUrl =  hotUrl + "/v02_new/"
-						self.checkNeedModifyManifest(_hotUrl,manifestPath,onSuc);
-					}
-					var httpUrl = (data && data.httpList) ? data.httpList : null;
-					if (httpUrl) {
-						self._httpUrlList = httpUrl;
-					}
-					var loginUrl = (data && data.loginList) ? data.loginList : null;
-					if (loginUrl){
-						self._loginUrlList = loginUrl;
-					}
+					cc.log("initConfig9======",url,JSON.stringify(data))
+                    self.initConfigSuc(data,manifestPath,onSuc)
 				}else{
-				    var url1_ = "https://xmqp01.oss-cn-shenzhen.aliyuncs.com/configList.json";
-					self.initConfig(manifestPath,onSuc,url1_);
+				    if (failConfig < maxFailConfig) {
+                        var url1_ = "https://xmqp01.oss-cn-shenzhen.aliyuncs.com/configList.json";
+                        self.initConfig(manifestPath,onSuc,url1_);
+					}else{
+                        onerror.call(self)
+                        self.writeLocalConfig(manifestPath,onSuc)
+                    }
 				}
 			}else {
-			    var url1_ = "https://xmqp01.oss-cn-shenzhen.aliyuncs.com/configList.json";
-				self.initConfig(manifestPath,onSuc,url1_);
+			    if (failConfig < maxFailConfig) {
+                    var url1_ = "https://xmqp01.oss-cn-shenzhen.aliyuncs.com/configList.json";
+                    self.initConfig(manifestPath,onSuc,url1_);
+				}else{
+				    onerror.call(self)
+                    self.writeLocalConfig(manifestPath,onSuc)
+				}
 			}
 		}
 		xhr.send();
+	},
+
+	writeLocalConfig:function(manifestPath,onSuc){
+	    failConfig = failConfig + 1;
+        if (jsb.fileUtils.isFileExist("res/config/configList.json")) {
+            var localJson = jsb.fileUtils.getStringFromFile("res/config/configList.json");
+            var afterJson = this.decryptHttp(localJson);
+            if (afterJson){
+                var data = JSON.parse(afterJson);
+                this.initConfigSuc(data,manifestPath,onSuc)
+//                cc.log("读取成功");
+//                cc.log("writeLocalConfig==",JSON.stringify(data))
+            }else{
+                onSuc();
+            }
+        }else{
+           onSuc();
+//           cc.log("读取失败");
+        }
+	},
+
+	initConfigSuc:function(data,manifestPath,onSuc){
+	    var self = this;
+		var hotUrl = (data && data.hotList && data.hotList.ips) ? data.hotList.ips : null;
+        if (hotUrl){
+            var _hotUrl =  hotUrl + "/v02_new/"
+            self.checkNeedModifyManifest(_hotUrl,manifestPath,onSuc);
+        }
+        var httpUrl = (data && data.httpList) ? data.httpList : null;
+        if (httpUrl) {
+            self._httpUrlList = httpUrl;
+        }
+        var loginUrl = (data && data.loginList) ? data.loginList : null;
+        if (loginUrl){
+            self._loginUrlList = loginUrl;
+        }
 	},
 	/**
 	 * 检测是否需要修改.manifest文件
